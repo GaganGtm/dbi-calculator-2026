@@ -7,9 +7,6 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; }
         .header-title { background-color: #4285f4; color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 24px; margin-bottom: 0;}
-        .instruction-bar { display: flex; text-align: center; font-weight: bold; }
-        .entry-cells { background-color: #34a853; color: white; width: 45%; padding: 10px; }
-        .auto-cells { background-color: #a50e0e; color: white; width: 55%; padding: 10px; }
         
         /* Tabs */
         .tab-container { margin-bottom: 20px; margin-top: 20px; display: flex; gap: 5px;}
@@ -48,12 +45,12 @@
 
     <!-- TAB 1: Data Entry -->
     <div id="dataEntry" class="tab-content active">
-        <div class="instruction-bar">
-            <div class="entry-cells">*Data Entry Cells - (Compulsory)*</div>
-            <div class="auto-cells">*Auto-calculated. Don't modify these cells*</div>
-        </div>
         <table id="spreadsheet">
             <thead>
+                <tr>
+                    <th colspan="8" style="background-color: #34a853; color: white; padding: 10px;">*Data Entry Cells - (Compulsory)*</th>
+                    <th colspan="7" style="background-color: #a50e0e; color: white; padding: 10px;">*Auto-calculated. Don't modify these cells*</th>
+                </tr>
                 <tr>
                     <th>SN</th>
                     <th>Doctor / Facility Name</th>
@@ -143,10 +140,14 @@
             </ul>
 
             <div class="tech-note">
-                <h3 style="margin-top: 0; color: #856404; border-bottom: none;">Technical Note: Calculation Assumptions[cite: 1]</h3>
+                <h3 style="margin-top: 0; color: #856404; border-bottom: none;">Technical Note: Calculation Assumptions</h3>
                 <p><strong>Underweight-Obesity Anomaly:</strong> Mathematically impossible. Represents a theoretical reality only in rare Severe IUGR cases with profoundly compromised length. If flagged, data is likely technically wrong and requires re-verification.</p>
                 <p><strong>Age Limit:</strong> Tool will not function for children > 5 years (60 months) which is according to WHO 2006 growth standards.</p>
                 <p><strong>Minimum Length:</strong> No classification for length < 45 cm as per WHO 2006 growth standards.</p>
+            </div>
+            
+            <div style="background-color: #4285f4; color: white; padding: 15px; margin-top: 20px; text-align: center; font-weight: bold; font-style: italic;">
+                Contact: Mr. Gagan Gautam, Consultant to UNICEF Maharashtra (gautamgagan.work@gmail.com), Dr. Mrudula Phadke, Senior Advisor to UNICEF Maharashtra (drmapaa@yahoo.com)
             </div>
         </div>
     </div>
@@ -155,7 +156,8 @@
     // ==========================================
     // 1. INSERT YOUR WHO JSON DATA HERE
     // ==========================================
-    const WFA_BOYS = [
+    
+    //        const WFA_BOYS = [
   {
     "Day": 0,
     "L": 0.3487,
@@ -147647,6 +147649,8 @@
     "SD4": 34.407
   }
 ];
+    
+
     // ==========================================
 
     let rowCount = 0;
@@ -147674,8 +147678,8 @@
         html += `<td><select class="gender" onchange="calcRow(${rowCount})">
                     <option value="">Select</option><option value="m">m</option><option value="f">f</option>
                  </select></td>`;
-        html += `<td><input type="number" class="weight" step="0.01" onkeyup="calcRow(${rowCount})"></td>`;
-        html += `<td><input type="number" class="height" step="0.1" onkeyup="calcRow(${rowCount})"></td>`;
+        html += `<td><input type="number" class="weight" step="0.01" onkeyup="calcRow(${rowCount})" onchange="calcRow(${rowCount})"></td>`;
+        html += `<td><input type="number" class="height" step="0.1" onkeyup="calcRow(${rowCount})" onchange="calcRow(${rowCount})"></td>`;
         
         html += `<td class="waz-z"></td><td class="waz-stat"></td>`;
         html += `<td class="haz-z"></td><td class="haz-stat"></td>`;
@@ -147698,11 +147702,8 @@
         return z;
     }
 
-    // REAL DATA LOOKUP FUNCTION
+    // Bulletproof Lookup matching exact keys or the first column in JSON
     function getLMS(table, searchVal) {
-        // Ensure height matches the 1-decimal format in WHO tables (e.g., 65.2)
-        let key = (table.includes("WFH") || table.includes("WFL")) ? parseFloat(searchVal).toFixed(1) : Math.round(searchVal);
-        
         let targetArray;
         if (table === "WFA_BOYS") targetArray = WFA_BOYS;
         if (table === "WFA_GIRLS") targetArray = WFA_GIRLS;
@@ -147715,17 +147716,24 @@
 
         if (!targetArray || targetArray.length === 0) return null;
 
-        // Search the array using the exact age or height key
         return targetArray.find(row => {
-            let rowKey = row.Month ?? row.Age ?? row.Length ?? row.Height; 
-            return parseFloat(rowKey).toFixed(1) === parseFloat(key).toFixed(1);
+            let rowKey = row.Day ?? row.Month ?? row.Age ?? row.day ?? row.month ?? row.age ?? row.Length ?? row.Height ?? Object.values(row)[0]; 
+            
+            if (table.includes("WFH") || table.includes("WFL")) {
+                return parseFloat(rowKey).toFixed(1) === parseFloat(searchVal).toFixed(1);
+            } else {
+                // WFA and HFA now look for Age in DAYS (matching exact integers)
+                return Math.round(parseFloat(rowKey)) === Math.round(searchVal);
+            }
         });
     }
 
     function calcRow(id) {
         const row = document.getElementById(`row-${id}`);
-        const sDate = row.querySelector('.surveyDate').value;
-        const bDate = row.querySelector('.dob').value;
+        const sDateInput = row.querySelector('.surveyDate');
+        const bDateInput = row.querySelector('.dob');
+        const sDate = sDateInput.value;
+        const bDate = bDateInput.value;
         const gender = row.querySelector('.gender').value;
         const w = parseFloat(row.querySelector('.weight').value);
         const h = parseFloat(row.querySelector('.height').value);
@@ -147737,46 +147745,57 @@
 
         if (!sDate || !bDate || !gender || isNaN(w) || isNaN(h)) return;
 
+        // Validating Date format isn't strictly necessary with <input type="date"> 
+        // as the browser enforces the format, but checking logical flow is crucial.
+        
         const ageDays = Math.floor((new Date(sDate) - new Date(bDate)) / 86400000);
+        
+        // Pop-up Alert and Cell notification for backwards dates
+        if (ageDays < 0) {
+            alert("Survey Date cannot be before Birth Date.");
+            sDateInput.value = ""; // Clear the bad date
+            outDbi.innerText = "Error: Survey Date cannot be before Birth Date";
+            outDbi.style.backgroundColor = "#ffeb3b"; outDbi.style.color = "black";
+            return;
+        }
         
         if (ageDays > 1856) {
             outDbi.innerText = "Age of the child > 5 years";
+            outDbi.style.backgroundColor = "transparent"; outDbi.style.color = "black";
             return;
         }
         
         if (h < 45) {
              outDbi.innerText = "Implausible data (Length < 45cm)";
+             outDbi.style.backgroundColor = "transparent"; outDbi.style.color = "black";
              return;
         }
 
-        // --- NEW REAL MATH LOGIC ---
-        let ageMonths = Math.round(ageDays / 30.4375);
         let waz = 0, haz = 0, whz = 0;
         
-        let wfaData = getLMS((gender === 'm' ? "WFA_BOYS" : "WFA_GIRLS"), ageMonths);
+        let wfaData = getLMS((gender === 'm' ? "WFA_BOYS" : "WFA_GIRLS"), ageDays);
         if(wfaData) waz = computeZ(w, wfaData.L, wfaData.M, wfaData.S) || 0;
 
-        let hfaData = getLMS((gender === 'm' ? "HFA_BOYS" : "HFA_GIRLS"), ageMonths);
+        let hfaData = getLMS((gender === 'm' ? "HFA_BOYS" : "HFA_GIRLS"), ageDays);
         if(hfaData) haz = computeZ(h, hfaData.L, hfaData.M, hfaData.S) || 0;
 
         let whzTable = ageDays < 731 ? (gender === 'm' ? "WFL_BOYS" : "WFL_GIRLS") : (gender === 'm' ? "WFH_BOYS" : "WFH_GIRLS");
         let whzData = getLMS(whzTable, h);
         if(whzData) whz = computeZ(w, whzData.L, whzData.M, whzData.S) || 0;
-        // ---------------------------
-        
+
         let wazStat = "Normal";
         if (waz < -3) wazStat = "Severely Underweight";
         else if (waz < -2) wazStat = "Moderately Underweight";
         
         outWazZ.innerText = wfaData ? waz.toFixed(3) : "N/A"; 
-        outWazS.innerText = wazStat;
+        outWazS.innerText = wfaData ? wazStat : "N/A";
 
         let hazStat = "Normal";
         if (haz < -3) hazStat = "Severely Stunted";
         else if (haz < -2) hazStat = "Moderately Stunted";
         
         outHazZ.innerText = hfaData ? haz.toFixed(3) : "N/A"; 
-        outHazS.innerText = hazStat;
+        outHazS.innerText = hfaData ? hazStat : "N/A";
 
         let whzStat = "Normal";
         if (whz < -3) whzStat = "SAM";
@@ -147784,7 +147803,13 @@
         else if (whz >= 2) whzStat = "Obese";
         
         outWhzZ.innerText = whzData ? whz.toFixed(3) : "N/A"; 
-        outWhzS.innerText = whzStat;
+        outWhzS.innerText = whzData ? whzStat : "N/A";
+
+        if (!wfaData || !hfaData || !whzData) {
+            outDbi.innerText = "Missing WHO Data for Days";
+            outDbi.style.backgroundColor = "transparent"; outDbi.style.color = "red";
+            return;
+        }
 
         let dbi = "Implausible data";
         
@@ -147799,7 +147824,7 @@
         if ((wazStat === "Moderately Underweight" || wazStat === "Severely Underweight") && (hazStat === "Moderately Stunted" || hazStat === "Severely Stunted") && (whzStat === "MAM" || whzStat === "SAM")) dbi = "D (Underweight + Stunting + Wasting)";
 
         outDbi.innerText = dbi;
-        outDbi.style.backgroundColor = dbi.startsWith("D") ? "red" : "transparent";
+        outDbi.style.backgroundColor = dbi.startsWith("D") ? "#a50e0e" : "transparent";
         outDbi.style.color = dbi.startsWith("D") ? "white" : "black";
     }
 
@@ -147870,7 +147895,7 @@
         });
     }
 
-    window.onload = () => { for(let i=0; i<5; i++) addRow(); };
+    window.onload = () => { for(let i=0; i<10; i++) addRow(); };
 </script>
 </body>
 </html>
