@@ -28,7 +28,6 @@
         
         input, select { width: 95%; box-sizing: border-box; padding: 4px; border: 1px solid #bbb; font-size: 11px; background-color: rgba(255,255,255,0.8); border-radius: 3px;}
         
-        /* DBI category output no longer bold */
         .dbi-cat { font-weight: normal !important; }
         .status-cell { font-weight: bold; }
 
@@ -37,20 +36,21 @@
         #summaryBody tr:nth-child(odd) { background-color: #ffffff; }
 
         /* Bulk Import */
-        .bulk-import-container { background: #e8f0fe; padding: 15px; margin-top: 20px; border: 1px solid #4285f4; border-radius: 5px; }
-        .bulk-import-container textarea { width: 100%; height: 40px; margin-top: 10px; margin-bottom: 5px; font-size: 11px; padding: 5px;}
+        .bulk-import-container { background: #e8f0fe; padding: 12px; margin-top: 20px; border: 1px solid #4285f4; border-radius: 5px; font-size: 12px;}
+        .bulk-import-container textarea { width: 100%; height: 35px; margin-top: 8px; margin-bottom: 5px; font-size: 11px; padding: 5px;}
 
         /* Summary Grid Layout matching heights */
         .summary-grid { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; align-items: stretch;}
         .summary-column { display: flex; flex-direction: column; width: 100%; max-width: 600px; justify-content: space-between; }
         .summary-table th, .summary-table td { padding: 8px; font-size: 13px; }
         
-        /* Chart Container Expanded to Match Left Table Height */
+        /* Chart Container */
         .chart-container { width: 100%; max-width: 500px; flex-grow: 1; background: white; padding: 15px; border-radius: 8px; border: 1px solid #ccc; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; align-items: center;}
         .chart-wrapper { position: relative; width: 100%; height: 350px; }
 
-        /* Export Buttons */
-        .export-btn { background-color: #2e7d32; color: white; border: none; padding: 8px 14px; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 13px; margin-top: 10px; transition: background 0.2s; }
+        /* Export Buttons (Top Right) */
+        .header-with-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 10px; }
+        .export-btn { background-color: #2e7d32; color: white; border: none; padding: 4px 8px; cursor: pointer; font-weight: bold; border-radius: 4px; font-size: 11px; transition: background 0.2s; }
         .export-btn:hover { background-color: #1b5e20; }
 
         /* Guide Grid Layouts */
@@ -61,12 +61,12 @@
         }
         
         .guide-box { background: white; padding: 20px; border-radius: 8px; border: 1px solid #ccc; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 14px; line-height: 1.6; color: #333;}
-        .guide-box h2, .guide-box h3 { margin-top: 0; color: #fbbc04; border-bottom: 2px solid #eee; padding-bottom: 10px; font-size: 18px;}
+        .guide-box h2, .guide-box h3 { margin-top: 0; color: #e91e63; border-bottom: 2px solid #eee; padding-bottom: 10px; font-size: 18px;}
         
         .tech-note { background-color: #fff3cd; border-left: 5px solid #ffc107; padding: 20px; margin-top: 20px; font-size: 14px; line-height: 1.6; border-radius: 0 8px 8px 0;}
         .tech-note h3 { margin-top: 0; color: #856404; border-bottom: none; font-size: 18px;}
         
-        .copyright-notice { font-size: 12px; color: #555; text-align: center; margin-top: 30px; padding-top: 15px; border-top: 1px solid #ddd; }
+        .copyright-notice { font-size: 13px; color: #880e4f; background-color: #f8bbd0; text-align: center; margin-top: 30px; padding: 15px; border: 1px solid #f06292; border-radius: 8px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
     </style>
 </head>
 <body>
@@ -76,7 +76,7 @@
     <div class="tab-container">
         <button class="tab-btn active" id="btn-dataEntry" onclick="switchTab('dataEntry', '#4285f4', '#f4f7fe')" style="border-top: 4px solid #4285f4; color: #4285f4; background-color: #f4f7fe;">DBI Calculator</button>
         <button class="tab-btn" id="btn-summary" onclick="switchTab('summary', '#2e7d32', '#f2f9f4')">Double Burden Index Summary</button>
-        <button class="tab-btn" id="btn-guide" onclick="switchTab('guide', '#fbbc04', '#fffbf2')">User Guide</button>
+        <button class="tab-btn" id="btn-guide" onclick="switchTab('guide', '#e91e63', '#fce4ec')">User Guide</button>
     </div>
 
     <!-- TAB 1: Data Entry -->
@@ -84,8 +84,8 @@
         <table id="spreadsheet">
             <thead>
                 <tr>
-                    <th colspan="9" style="background-color: #2e7d32; color: white; padding: 8px; font-size: 13px;">*Data Entry Cells - (Compulsory)*</th>
-                    <th colspan="7" style="background-color: #1565c0; color: white; padding: 8px; font-size: 13px;">*Automatic output for the classification of malnutrition and DBI*</th>
+                    <th colspan="9" style="background-color: #1976d2; color: white; padding: 8px; font-size: 13px;">*Data Entry Cells - (Compulsory)*</th>
+                    <th colspan="7" style="background-color: #0d47a1; color: white; padding: 8px; font-size: 13px;">*Automatic output for the classification of malnutrition and DBI*</th>
                 </tr>
                 <tr>
                     <th style="width: 2%;">SN</th>
@@ -111,12 +111,12 @@
             </tbody>
         </table>
         
-        <button onclick="addRow()" style="margin-top: 15px; padding: 10px 15px; background-color: #4285f4; color: white; border: none; cursor:pointer; font-weight:bold; border-radius: 5px;">+ Add Single Row</button>
+        <button onclick="addRow()" style="margin-top: 15px; padding: 8px 12px; background-color: #4285f4; color: white; border: none; cursor:pointer; font-weight:bold; border-radius: 4px; font-size: 12px;">+ Add Single Row</button>
 
         <div class="bulk-import-container">
             <strong>Bulk Excel Import:</strong> Copy rows from Excel (Doctor, Child Name, Survey Date, Birth Date, Gender, Weight, Height) and paste them below.
             <textarea id="bulkPasteArea" placeholder="Paste tab-separated Excel data here..."></textarea>
-            <button onclick="processBulkPaste()" style="background-color: #2e7d32; color: white; border: none; padding: 8px 15px; cursor: pointer; font-weight: bold; border-radius: 3px;">Import Data</button>
+            <button onclick="processBulkPaste()" style="background-color: #1976d2; color: white; border: none; padding: 6px 12px; cursor: pointer; font-weight: bold; border-radius: 3px; font-size: 11px;">Import Data</button>
         </div>
     </div>
 
@@ -124,9 +124,13 @@
     <div id="summary" class="tab-content">
         <div class="summary-grid">
             
-            <!-- Left Column: Tables & Export Button -->
+            <!-- Left Column: Tables -->
             <div class="summary-column">
                 <div class="summary-table">
+                    <div class="header-with-btn">
+                        <h3 style="margin: 0; color: #2e7d32; font-size: 15px;">Classification Table</h3>
+                        <button class="export-btn" onclick="exportTableToCSV()">📥 Download Table (CSV)</button>
+                    </div>
                     <table style="background: white;" id="exportTable">
                         <thead>
                             <tr>
@@ -147,20 +151,16 @@
                         <tr style="background:#2e7d32; color:white; font-weight:bold"><td style="text-align: left;">Total (N)</td><td id="grandTotal">0</td></tr>
                     </table>
                 </div>
-                <div>
-                    <button class="export-btn" onclick="exportTableToCSV()">📥 Download Table (CSV)</button>
-                </div>
             </div>
 
-            <!-- Right Column: Chart & Export Button -->
+            <!-- Right Column: Chart -->
             <div class="chart-container">
-                <!-- Identical font size matching tab title -->
-                <h3 style="margin: 0 0 10px 0; color: #2e7d32; font-size: 15px; text-align: center;">Cohort Summary - Double Burden Index</h3>
+                <div class="header-with-btn">
+                    <h3 style="margin: 0; color: #2e7d32; font-size: 15px;">Cohort Summary - Double Burden Index</h3>
+                    <button class="export-btn" onclick="exportChartAsPNG()">📥 Download Chart (PNG)</button>
+                </div>
                 <div class="chart-wrapper">
                     <canvas id="dbiChart"></canvas>
-                </div>
-                <div>
-                    <button class="export-btn" onclick="exportChartAsPNG()">📥 Download Chart (PNG)</button>
                 </div>
             </div>
 
@@ -189,7 +189,7 @@
                     <li style="margin-bottom: 8px;"><strong>Prepare your Excel file:</strong> Ensure your data is arranged in exactly these 7 columns in this specific order: <em>Doctor/Facility Name, Name of Child, Survey Date, Birth Date, Gender (m/f), Weight (kg), Height (cm)</em>.</li>
                     <li style="margin-bottom: 8px;"><strong>Copy the data:</strong> Highlight and copy the rows containing your data. Do not copy the header row. (For smooth performance, copy a maximum of 1,000 rows at a time).</li>
                     <li style="margin-bottom: 8px;"><strong>Paste into the tool:</strong> Go to the <strong>DBI Calculator</strong> tab and scroll to the bottom. Click inside the white text box under "Bulk Excel Import" and paste your copied data (Ctrl+V).</li>
-                    <li><strong>Import:</strong> Click the green <strong>Import Data</strong> button. The tool will automatically create the rows and instantly display all calculations and DBI categories.</li>
+                    <li><strong>Import:</strong> Click the blue <strong>Import Data</strong> button. The tool will automatically create the rows and instantly display all calculations and DBI categories.</li>
                 </ol>
             </div>
         </div>
@@ -216,7 +216,7 @@
                 <h3>General Notes</h3>
                 <ul style="padding-left: 20px;">
                     <li style="margin-bottom: 10px;"><strong>Mobile Access:</strong> Runs directly in your mobile browser without apps!</li>
-                    <li style="margin-bottom: 10px;"><strong>Tutorial:</strong> Refer to the following video - <a href="https://drive.google.com/file/d/1jjDfT88PhgFN9V5d4Ii4_Qvw_P8qjwmD/view?usp=sharing" target="_blank" style="color:#2e7d32;">View Video</a></li>
+                    <li style="margin-bottom: 10px;"><strong>Tutorial:</strong> Refer to the following video - <a href="https://drive.google.com/file/d/1jjDfT88PhgFN9V5d4Ii4_Qvw_P8qjwmD/view?usp=sharing" target="_blank" style="color:#e91e63;">View Video</a></li>
                     <li><strong>Editing:</strong> Enter data only in cells under <em>*Data Entry Cells - (Compulsory)*</em>.</li>
                 </ul>
             </div>
@@ -231,8 +231,8 @@
             <p><strong>Minimum Length:</strong> No classification for length < 45 cm per WHO standards.</p>
         </div>
         
-        <div style="background-color: #2e7d32; color: white; padding: 15px; margin-top: 20px; text-align: center; border-radius: 8px;">
-            <strong>Contact:</strong> Mr. Gagan Gautam, Consultant to UNICEF Maharashtra (gautamgagan.work@gmail.com), Dr. Mrudula Phadke, Senior Advisor to UNICEF Maharashtra (drmapaa@yahoo.com)
+        <div style="background-color: #e91e63; color: white; padding: 15px; margin-top: 20px; text-align: center; border-radius: 8px;">
+            <strong>Contact:</strong> Mr. Gagan Gautam, Consultant to UNICEF Maharashtra (<a href="mailto:gautamgagan.work@gmail.com" style="color: white; font-style: italic; text-decoration: underline;">gautamgagan.work@gmail.com</a>), Dr. Mrudula Phadke, Senior Advisor to UNICEF Maharashtra (<a href="mailto:drmapaa@yahoo.com" style="color: white; font-style: italic; text-decoration: underline;">drmapaa@yahoo.com</a>)
         </div>
 
         <div class="copyright-notice">
@@ -241,6 +241,7 @@
     </div>
 
 <script>
+    // Security Scripts
     document.addEventListener('contextmenu', event => event.preventDefault());
     document.addEventListener('keydown', function (event) {
         if (event.keyCode == 123) { event.preventDefault(); return false; } 
@@ -148016,10 +148017,13 @@
 
         outDbi.innerText = dbi;
         
+        // Intense colors for A and D
         if (dbi.startsWith("A")) {
-            outDbi.style.backgroundColor = "#e8f5e9";
+            outDbi.style.backgroundColor = "#4caf50";
+            outDbi.style.color = "white";
         } else if (dbi.startsWith("D")) {
-            outDbi.style.backgroundColor = "#ffebee";
+            outDbi.style.backgroundColor = "#f44336";
+            outDbi.style.color = "white";
         }
     }
 
@@ -148057,9 +148061,11 @@
 
         let html = '';
         let chartData = []; let chartColors = []; let chartLabels = [];
+        let totalAtoI = 0;
 
         categories.forEach(cat => {
             let count = counts[cat.id];
+            totalAtoI += count;
             let perc = validTotal > 0 ? ((count / validTotal) * 100).toFixed(1) : "0.0";
             html += `<tr>
                 <td style="text-align:center; font-weight:bold;">${cat.id}</td>
@@ -148069,9 +148075,19 @@
             </tr>`;
             
             if (count > 0) {
-                chartData.push(count); chartColors.push(cat.bg); chartLabels.push(cat.name);
+                chartData.push(count); chartColors.push(cat.bg); 
+                // Adding Percentage into legend text for PNG downloads
+                chartLabels.push(`${cat.name} (${perc}%)`);
             }
         });
+
+        // Restore Total (A to I) row
+        let totalPerc = validTotal > 0 ? ((totalAtoI / validTotal) * 100).toFixed(1) : "0.0";
+        html += `<tr style="background:#e8f5e9; color:black; font-weight:bold">
+                    <td colspan="2" style="text-align:right;">Total (A to I)</td>
+                    <td style="text-align:center;">${totalAtoI}</td>
+                    <td style="text-align:center;">${totalPerc}%</td>
+                 </tr>`;
 
         document.getElementById('summaryBody').innerHTML = html;
         
@@ -148089,14 +148105,12 @@
                 responsive: true, 
                 maintainAspectRatio: false, 
                 plugins: { 
-                    legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+                    legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
                                 let val = context.raw;
-                                let total = context.chart._metasets[context.datasetIndex].total;
-                                let perc = ((val / total) * 100).toFixed(1);
-                                return ' ' + context.label + ': ' + val + ' children (' + perc + '%)';
+                                return ' ' + context.label + ' - Count: ' + val;
                             }
                         }
                     }
@@ -148105,7 +148119,6 @@
         });
     }
 
-    // Export Table to CSV function
     function exportTableToCSV() {
         let csv = [];
         let rows = document.querySelectorAll("#exportTable tr");
@@ -148124,7 +148137,6 @@
         document.body.removeChild(downloadLink);
     }
 
-    // Export Chart as PNG function
     function exportChartAsPNG() {
         let imageURI = document.getElementById('dbiChart').toDataURL("image/png");
         let downloadLink = document.createElement('a');
