@@ -2,78 +2,92 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Double Burden Index (DBI) Calculator</title>
+    <title>Double Burden Index (DBI) Calculator by Phadke, Gautam, Nair and Rade, 2026</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; }
-        .header-title { background-color: #4285f4; color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 24px; margin-bottom: 0;}
+        body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background-color: #f8f9fa; }
+        .header-title { background-color: #4285f4; color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 22px; margin-bottom: 0;}
         
         /* Tabs */
-        .tab-container { margin-bottom: 20px; margin-top: 20px; display: flex; gap: 5px;}
-        .tab-btn { background-color: #e0e0e0; border: none; padding: 10px 20px; cursor: pointer; font-size: 16px; font-weight: bold; border-radius: 5px 5px 0 0;}
+        .tab-container { margin-bottom: 15px; margin-top: 15px; display: flex; gap: 5px; flex-wrap: wrap;}
+        .tab-btn { background-color: #e0e0e0; border: none; padding: 10px 15px; cursor: pointer; font-size: 15px; font-weight: bold; border-radius: 5px 5px 0 0;}
         .tab-btn.active { background-color: white; border: 1px solid #ccc; border-bottom: none; color: #4285f4;}
-        .tab-content { display: none; background: white; padding: 20px; border: 1px solid #ccc; overflow-x: auto; margin-top: -6px; }
+        .tab-content { display: none; background: white; padding: 15px; border: 1px solid #ccc; overflow-x: auto; margin-top: -6px; }
         .tab-content.active { display: block; }
 
-        /* Table Design */
-        table { border-collapse: collapse; width: 100%; white-space: nowrap; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; font-size: 14px; }
+        /* Compact Table Design to Prevent Scrolling */
+        table { border-collapse: collapse; width: 100%; table-layout: auto; }
+        th, td { border: 1px solid #ccc; padding: 4px; text-align: center; font-size: 11px; }
         th { background-color: #4285f4; color: white; }
-        input, select { width: 90%; padding: 4px; border: 1px solid #ccc; }
+        input, select { width: 95%; box-sizing: border-box; padding: 3px; border: 1px solid #ccc; font-size: 11px; }
         .status-cell { font-weight: bold; }
         
+        /* Bulk Import */
+        .bulk-import-container { background: #e8f0fe; padding: 10px; margin-bottom: 15px; border: 1px solid #4285f4; border-radius: 5px; }
+        .bulk-import-container textarea { width: 100%; height: 40px; margin-bottom: 5px; font-size: 11px; }
+
         /* Summary Grid */
         .summary-grid { display: flex; gap: 20px; flex-wrap: wrap;}
-        .summary-table { width: 100%; max-width: 600px; }
+        .summary-table { width: 100%; max-width: 600px; font-size: 14px;}
+        .summary-table th, .summary-table td { padding: 8px; font-size: 13px; }
         .chart-container { width: 100%; max-width: 500px; height: 400px; }
 
         /* Guide Formatting */
-        .guide-section { line-height: 1.6; color: #333; }
+        .guide-section { line-height: 1.6; color: #333; font-size: 14px;}
         .guide-section h3 { color: #4285f4; border-bottom: 2px solid #ccc; padding-bottom: 5px;}
         .tech-note { background-color: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <div class="header-title">Double Burden Index (DBI) Tool by Phadke, Nair, Gautam and Rade, 2026</div>
+    <div class="header-title">Double Burden Index (DBI) Calculator by Phadke, Gautam, Nair and Rade, 2026</div>
 
     <div class="tab-container">
         <button class="tab-btn active" onclick="switchTab('dataEntry', event)">DBI_Calculator</button>
         <button class="tab-btn" onclick="switchTab('summary', event)">Double Burden Index Summary</button>
         <button class="tab-btn" onclick="switchTab('guide', event)">User Guide</button>
+        <button class="tab-btn" onclick="switchTab('reference', event)">Framework & References</button>
     </div>
 
     <!-- TAB 1: Data Entry -->
     <div id="dataEntry" class="tab-content active">
+        
+        <div class="bulk-import-container">
+            <strong>Bulk Excel Import:</strong> Copy rows from Excel (Doctor, Child Name, Survey Date, Birth Date, Gender, Weight, Height) and paste them below.
+            <textarea id="bulkPasteArea" placeholder="Paste tab-separated Excel data here..."></textarea>
+            <button onclick="processBulkPaste()" style="background-color: #34a853; color: white; border: none; padding: 5px 10px; cursor: pointer; font-weight: bold;">Import Data</button>
+        </div>
+
         <table id="spreadsheet">
             <thead>
                 <tr>
-                    <th colspan="8" style="background-color: #34a853; color: white; padding: 10px;">*Data Entry Cells - (Compulsory)*</th>
-                    <th colspan="7" style="background-color: #a50e0e; color: white; padding: 10px;">*Auto-calculated. Don't modify these cells*</th>
+                    <th colspan="9" style="background-color: #34a853; color: white; padding: 8px; font-size: 13px;">*Data Entry Cells - (Compulsory)*</th>
+                    <th colspan="7" style="background-color: #a50e0e; color: white; padding: 8px; font-size: 13px;">*Automatic output for the classification of malnutrition and DBI*</th>
                 </tr>
                 <tr>
-                    <th>SN</th>
-                    <th>Doctor / Facility Name</th>
-                    <th>Name of Child</th>
-                    <th>Survey Date<br>(MM/DD/YYYY)</th>
-                    <th>Birth Date<br>(MM/DD/YYYY)</th>
-                    <th>Gender<br>(m/f)</th>
-                    <th>Weight<br>(kg)</th>
-                    <th>Height<br>(cm)</th>
-                    <th>Z Score<br>(WAZ)</th>
-                    <th>Weight For<br>Age Status</th>
-                    <th>Z Score<br>(HAZ)</th>
-                    <th>Height For<br>Age Status</th>
-                    <th>Z Score<br>{W(H/L)Z}</th>
-                    <th>Weight<br>For Height</th>
-                    <th>Double-Burden Index (DBI)<br>Category</th>
+                    <th style="width: 2%;">SN</th>
+                    <th style="width: 10%;">Doctor / Facility Name</th>
+                    <th style="width: 10%;">Name of Child</th>
+                    <th style="width: 7%;">Survey Date<br>(MM/DD/YYYY)</th>
+                    <th style="width: 7%;">Birth Date<br>(MM/DD/YYYY)</th>
+                    <th style="width: 5%;">Age<br>(Months)</th>
+                    <th style="width: 5%;">Gender<br>(m/f)</th>
+                    <th style="width: 5%;">Weight<br>(kg)</th>
+                    <th style="width: 5%;">Height<br>(cm)</th>
+                    <th style="width: 5%;">Z Score<br>(WAZ)</th>
+                    <th style="width: 7%;">Weight For<br>Age Status</th>
+                    <th style="width: 5%;">Z Score<br>(HAZ)</th>
+                    <th style="width: 7%;">Height For<br>Age Status</th>
+                    <th style="width: 5%;">Z Score<br>{W(H/L)Z}</th>
+                    <th style="width: 5%;">Weight<br>For Height</th>
+                    <th style="width: 10%;">Double-Burden Index (DBI)<br>Category</th>
                 </tr>
             </thead>
             <tbody id="tableBody">
                 <!-- Rows injected via JS -->
             </tbody>
         </table>
-        <button onclick="addRow()" style="margin-top: 15px; padding: 10px; background-color: #4285f4; color: white; border: none; cursor:pointer; font-weight:bold;">+ Add Row</button>
+        <button onclick="addRow()" style="margin-top: 15px; padding: 10px; background-color: #4285f4; color: white; border: none; cursor:pointer; font-weight:bold;">+ Add Single Row</button>
     </div>
 
     <!-- TAB 2: Summary Dashboard -->
@@ -90,7 +104,6 @@
                         </tr>
                     </thead>
                     <tbody id="summaryBody">
-                        <!-- Summary injected via JS -->
                     </tbody>
                 </table>
                 <br>
@@ -136,11 +149,13 @@
             <ul>
                 <li><strong>Mobile Access:</strong> Since this tool is now web-based, you no longer need the Google Sheets app. It will run directly in your mobile browser!</li>
                 <li><strong>Tutorial:</strong> Refer to the following video to learn data entry - <a href="https://drive.google.com/file/d/1jjDfT88PhgFN9V5d4Ii4_Qvw_P8qjwmD/view?usp=sharing" target="_blank">View Video</a></li>
-                <li><strong>Editing:</strong> The user is not supposed to edit any data fields except for the data points under Data Entry Cells (Compulsory).</li>
+                <li><strong>Editing:</strong> User is supposed to enter the data points on cells under *Data Entry Cells - (Compulsory)*.</li>
             </ul>
 
             <div class="tech-note">
                 <h3 style="margin-top: 0; color: #856404; border-bottom: none;">Technical Note: Calculation Assumptions</h3>
+                <p><strong>DBI Classification Limits:</strong> DBI classification uses a Z‑score less than −2 to classify low weight-for-age as “underweight”, low length/height-for-age as “stunted”, and low weight-for-length as “wasted”. Similarly a Z‑score above +2 is used to classify weight-for-height as “Overweight/Obesity”.</p>
+                <p><strong>LMS Method:</strong> The computation of percentiles and z-scores for all three indicators (underweight, stunting and wasting) uses formulae based on the LMS method given by Cole and Green in 1992. The same method has been used in the WHO Anthro software to construct growth charts and reference values.</p>
                 <p><strong>Underweight-Obesity Anomaly:</strong> Mathematically impossible. Represents a theoretical reality only in rare Severe IUGR cases with profoundly compromised length. If flagged, data is likely technically wrong and requires re-verification.</p>
                 <p><strong>Age Limit:</strong> Tool will not function for children > 5 years (60 months) which is according to WHO 2006 growth standards.</p>
                 <p><strong>Minimum Length:</strong> No classification for length < 45 cm as per WHO 2006 growth standards.</p>
@@ -152,12 +167,33 @@
         </div>
     </div>
 
+    <!-- TAB 4: Framework & References -->
+    <div id="reference" class="tab-content">
+        <div class="guide-section">
+            <h2>Conceptual Framework & References</h2>
+            <p>Below is the visual representation of the Double Burden Index (DBI) categories.</p>
+            
+            <!-- Replace the src link below with your actual image URL once uploaded to GitHub or another host -->
+            <div style="text-align: center; margin: 20px 0;">
+                <img src="https://via.placeholder.com/800x400.png?text=Insert+DBI+Framework+Image+Here" alt="DBI Conceptual Framework" style="max-width: 100%; border: 1px solid #ccc;">
+            </div>
+
+            <h3>Authors & References</h3>
+            <ul>
+                <li><strong>Dr. Mrudula Phadke</strong> - Senior Advisor to UNICEF Maharashtra</li>
+                <li><strong>Mr. Gagan Gautam</strong> - Consultant to UNICEF Maharashtra</li>
+                <li><strong>Rajalakshmi Nair</strong> - Nutrition Specialist</li>
+                <li><strong>Rade</strong></li>
+            </ul>
+        </div>
+    </div>
+
 <script>
     // ==========================================
     // 1. INSERT YOUR WHO JSON DATA HERE
     // ==========================================
     
-    const WFA_BOYS = [
+           const WFA_BOYS = [
   {
     "Day": 0,
     "L": 0.3487,
@@ -147664,22 +147700,33 @@
         if(tabId === 'summary') generateSummary();
     }
 
-    function addRow() {
+    function addRow(data = null) {
         rowCount++;
         const tbody = document.getElementById('tableBody');
         const tr = document.createElement('tr');
         tr.id = `row-${rowCount}`;
         
+        let facility = data ? data[0] : "";
+        let child = data ? data[1] : "";
+        let sDate = data ? formatExcelDate(data[2]) : "";
+        let bDate = data ? formatExcelDate(data[3]) : "";
+        let gender = data ? data[4].toLowerCase().trim() : "";
+        let weight = data ? data[5] : "";
+        let height = data ? data[6] : "";
+
         let html = `<td>${rowCount}</td>`;
-        html += `<td><input type="text" class="facility"></td>`;
-        html += `<td><input type="text" class="childName"></td>`;
-        html += `<td><input type="date" class="surveyDate" onchange="calcRow(${rowCount})"></td>`;
-        html += `<td><input type="date" class="dob" onchange="calcRow(${rowCount})"></td>`;
+        html += `<td><input type="text" class="facility" value="${facility}"></td>`;
+        html += `<td><input type="text" class="childName" value="${child}"></td>`;
+        html += `<td><input type="date" class="surveyDate" value="${sDate}" onchange="calcRow(${rowCount})"></td>`;
+        html += `<td><input type="date" class="dob" value="${bDate}" onchange="calcRow(${rowCount})"></td>`;
+        html += `<td class="age-months status-cell"></td>`;
         html += `<td><select class="gender" onchange="calcRow(${rowCount})">
-                    <option value="">Select</option><option value="m">m</option><option value="f">f</option>
+                    <option value="">Select</option>
+                    <option value="m" ${gender==='m'?'selected':''}>m</option>
+                    <option value="f" ${gender==='f'?'selected':''}>f</option>
                  </select></td>`;
-        html += `<td><input type="number" class="weight" step="0.01" onkeyup="calcRow(${rowCount})" onchange="calcRow(${rowCount})"></td>`;
-        html += `<td><input type="number" class="height" step="0.1" onkeyup="calcRow(${rowCount})" onchange="calcRow(${rowCount})"></td>`;
+        html += `<td><input type="number" class="weight" step="0.01" value="${weight}" onkeyup="calcRow(${rowCount})" onchange="calcRow(${rowCount})"></td>`;
+        html += `<td><input type="number" class="height" step="0.1" value="${height}" onkeyup="calcRow(${rowCount})" onchange="calcRow(${rowCount})"></td>`;
         
         html += `<td class="waz-z"></td><td class="waz-stat"></td>`;
         html += `<td class="haz-z"></td><td class="haz-stat"></td>`;
@@ -147688,6 +147735,41 @@
         
         tr.innerHTML = html;
         tbody.appendChild(tr);
+
+        if(data) calcRow(rowCount, false); // false suppresses pop-ups during bulk load
+    }
+
+    function formatExcelDate(dateStr) {
+        if(!dateStr) return "";
+        let d = new Date(dateStr);
+        if(isNaN(d)) return "";
+        return d.toISOString().split('T')[0];
+    }
+
+    function processBulkPaste() {
+        let area = document.getElementById('bulkPasteArea');
+        let text = area.value.trim();
+        if(!text) return;
+
+        let lines = text.split('\n');
+        if (lines.length > 1000) {
+            alert("Please paste a maximum of 1,000 rows at a time to prevent browser freezing.");
+            return;
+        }
+
+        // Remove the default blank rows if table is empty
+        if (rowCount === 10 && !document.querySelector('.childName').value) {
+            document.getElementById('tableBody').innerHTML = "";
+            rowCount = 0;
+        }
+
+        lines.forEach(line => {
+            let cols = line.split('\t');
+            if(cols.length >= 7) addRow(cols);
+        });
+
+        area.value = ""; 
+        alert(`Successfully imported ${lines.length} rows.`);
     }
 
     function computeZ(y, l, m, s) {
@@ -147702,7 +147784,6 @@
         return z;
     }
 
-    // Bulletproof Lookup matching exact keys or the first column in JSON
     function getLMS(table, searchVal) {
         let targetArray;
         if (table === "WFA_BOYS") targetArray = WFA_BOYS;
@@ -147718,61 +147799,69 @@
 
         return targetArray.find(row => {
             let rowKey = row.Day ?? row.Month ?? row.Age ?? row.day ?? row.month ?? row.age ?? row.Length ?? row.Height ?? Object.values(row)[0]; 
-            
             if (table.includes("WFH") || table.includes("WFL")) {
                 return parseFloat(rowKey).toFixed(1) === parseFloat(searchVal).toFixed(1);
             } else {
-                // WFA and HFA now look for Age in DAYS (matching exact integers)
                 return Math.round(parseFloat(rowKey)) === Math.round(searchVal);
             }
         });
     }
 
-    function calcRow(id) {
+    function calcRow(id, showAlerts = true) {
         const row = document.getElementById(`row-${id}`);
         const sDateInput = row.querySelector('.surveyDate');
         const bDateInput = row.querySelector('.dob');
         const sDate = sDateInput.value;
         const bDate = bDateInput.value;
         const gender = row.querySelector('.gender').value;
-        const w = parseFloat(row.querySelector('.weight').value);
-        const h = parseFloat(row.querySelector('.height').value);
+        const wInput = row.querySelector('.weight');
+        const hInput = row.querySelector('.height');
+        const w = parseFloat(wInput.value);
+        const h = parseFloat(hInput.value);
 
+        const outAgeM = row.querySelector('.age-months');
         const outWazZ = row.querySelector('.waz-z'); const outWazS = row.querySelector('.waz-stat');
         const outHazZ = row.querySelector('.haz-z'); const outHazS = row.querySelector('.haz-stat');
         const outWhzZ = row.querySelector('.whz-z'); const outWhzS = row.querySelector('.whz-stat');
         const outDbi = row.querySelector('.dbi-cat');
 
+        // Reset Styles
+        wInput.style.backgroundColor = "white";
+        hInput.style.backgroundColor = "white";
+        outDbi.style.backgroundColor = "transparent"; 
+        outDbi.style.color = "black";
+
         if (!sDate || !bDate || !gender || isNaN(w) || isNaN(h)) return;
 
-        // Validating Date format isn't strictly necessary with <input type="date"> 
-        // as the browser enforces the format, but checking logical flow is crucial.
-        
+        // Visual Alerts for Extreme Weight/Height
+        if (w < 1.8 || w > 32) wInput.style.backgroundColor = "pink";
+        if (h < 45 || h > 120) hInput.style.backgroundColor = "pink";
+
         const ageDays = Math.floor((new Date(sDate) - new Date(bDate)) / 86400000);
         
-        // Pop-up Alert and Cell notification for backwards dates
         if (ageDays < 0) {
-            alert("Survey Date cannot be before Birth Date.");
-            sDateInput.value = ""; // Clear the bad date
-            outDbi.innerText = "Error: Survey Date cannot be before Birth Date";
-            outDbi.style.backgroundColor = "#ffeb3b"; outDbi.style.color = "black";
+            if(showAlerts) alert("Survey Date cannot be before Birth Date.");
+            sDateInput.value = ""; 
+            outAgeM.innerText = "";
+            outDbi.innerText = "Error: Negative Date";
+            outDbi.style.backgroundColor = "#ffeb3b"; 
             return;
         }
+
+        // Display Age in Months
+        outAgeM.innerText = Math.round(ageDays / 30.4375);
         
         if (ageDays > 1856) {
             outDbi.innerText = "Age of the child > 5 years";
-            outDbi.style.backgroundColor = "transparent"; outDbi.style.color = "black";
             return;
         }
         
         if (h < 45) {
              outDbi.innerText = "Implausible data (Length < 45cm)";
-             outDbi.style.backgroundColor = "transparent"; outDbi.style.color = "black";
              return;
         }
 
         let waz = 0, haz = 0, whz = 0;
-        
         let wfaData = getLMS((gender === 'm' ? "WFA_BOYS" : "WFA_GIRLS"), ageDays);
         if(wfaData) waz = computeZ(w, wfaData.L, wfaData.M, wfaData.S) || 0;
 
@@ -147806,13 +147895,12 @@
         outWhzS.innerText = whzData ? whzStat : "N/A";
 
         if (!wfaData || !hfaData || !whzData) {
-            outDbi.innerText = "Missing WHO Data for Days";
-            outDbi.style.backgroundColor = "transparent"; outDbi.style.color = "red";
+            outDbi.innerText = "Missing WHO Data";
+            outDbi.style.color = "red";
             return;
         }
 
         let dbi = "Implausible data";
-        
         if (wazStat === "Normal" && hazStat === "Normal" && whzStat === "Normal") dbi = "A (Normal)";
         if (wazStat === "Normal" && hazStat === "Normal" && (whzStat === "MAM" || whzStat === "SAM")) dbi = "B (Only Wasting)";
         if (wazStat === "Normal" && hazStat === "Normal" && whzStat === "Obese") dbi = "I (Only Obese)";
@@ -147824,8 +147912,15 @@
         if ((wazStat === "Moderately Underweight" || wazStat === "Severely Underweight") && (hazStat === "Moderately Stunted" || hazStat === "Severely Stunted") && (whzStat === "MAM" || whzStat === "SAM")) dbi = "D (Underweight + Stunting + Wasting)";
 
         outDbi.innerText = dbi;
-        outDbi.style.backgroundColor = dbi.startsWith("D") ? "#a50e0e" : "transparent";
-        outDbi.style.color = dbi.startsWith("D") ? "white" : "black";
+        
+        // Color Coding for DBI Category
+        if (dbi.startsWith("A")) {
+            outDbi.style.backgroundColor = "#34a853";
+            outDbi.style.color = "white";
+        } else if (dbi.startsWith("D")) {
+            outDbi.style.backgroundColor = "#a50e0e";
+            outDbi.style.color = "white";
+        }
     }
 
     function generateSummary() {
@@ -147867,10 +147962,10 @@
             let count = counts[cat.id];
             let perc = validTotal > 0 ? ((count / validTotal) * 100).toFixed(1) : "0.0";
             html += `<tr>
-                <td style="background-color: white;">${cat.id}</td>
+                <td style="background-color: white; text-align:center;">${cat.id}</td>
                 <td style="text-align:left;">${cat.name}</td>
-                <td style="background-color: white;">${count}</td>
-                <td style="background-color: ${cat.bg};">${perc}</td>
+                <td style="background-color: white; text-align:center;">${count}</td>
+                <td style="background-color: ${cat.bg}; text-align:center; color:${(cat.id==='C'||cat.id==='D'||cat.id==='H')?'white':'black'}">${perc}</td>
             </tr>`;
             
             if (count > 0) {
@@ -147878,7 +147973,7 @@
             }
         });
 
-        html += `<tr style="background:#4285f4; color:white; font-weight:bold"><td colspan="2">Total</td><td>${validTotal}</td><td>100.0</td></tr>`;
+        html += `<tr style="background:#4285f4; color:white; font-weight:bold"><td colspan="2" style="text-align:right;">Total</td><td style="text-align:center;">${validTotal}</td><td style="text-align:center;">100.0</td></tr>`;
         document.getElementById('summaryBody').innerHTML = html;
         
         document.getElementById('dbiTotal').innerText = validTotal;
