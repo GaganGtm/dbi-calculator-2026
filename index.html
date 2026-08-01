@@ -8,7 +8,7 @@
         body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background-color: #f8f9fa; }
         .header-title { background-color: #4285f4; color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 22px; margin-bottom: 0;}
         
-        /* Tabs - Updated to fill the entire row evenly */
+        /* Tabs */
         .tab-container { margin-bottom: 15px; margin-top: 15px; display: flex; width: 100%; border-bottom: 1px solid #ccc;}
         .tab-btn { flex: 1; background-color: #e0e0e0; border: 1px solid #ccc; border-bottom: none; padding: 12px 10px; cursor: pointer; font-size: 15px; font-weight: bold; border-radius: 5px 5px 0 0; text-align: center; margin-right: 2px;}
         .tab-btn:last-child { margin-right: 0; }
@@ -24,6 +24,13 @@
         input, select { width: 95%; box-sizing: border-box; padding: 3px; border: 1px solid #ccc; font-size: 11px; }
         .status-cell { font-weight: bold; }
         
+        /* Reference Table Styling */
+        .ref-table th, .ref-table td { padding: 6px; font-size: 12px; text-align: left; }
+        .ref-table th { background-color: #21618C; text-align: center; }
+        .ref-table td:first-child { text-align: center; font-weight: bold; background-color: #2874A6; color: white; width: 15%;}
+        .ref-table tr:nth-child(even) td:nth-child(2) { background-color: #f2f2f2; }
+        .ref-table tr:nth-child(odd) td:nth-child(2) { background-color: #e6e6e6; }
+
         /* Bulk Import */
         .bulk-import-container { background: #e8f0fe; padding: 15px; margin-top: 20px; border: 1px solid #4285f4; border-radius: 5px; }
         .bulk-import-container textarea { width: 100%; height: 40px; margin-top: 10px; margin-bottom: 5px; font-size: 11px; }
@@ -36,7 +43,7 @@
 
         /* Guide Formatting */
         .guide-section { line-height: 1.6; color: #333; font-size: 14px;}
-        .guide-section h3 { color: #4285f4; border-bottom: 2px solid #ccc; padding-bottom: 5px;}
+        .guide-section h3 { color: #4285f4; border-bottom: 2px solid #ccc; padding-bottom: 5px; margin-top: 25px;}
         .tech-note { background-color: #fff3cd; border-left: 5px solid #ffc107; padding: 15px; margin-top: 20px; }
     </style>
 </head>
@@ -85,7 +92,6 @@
         
         <button onclick="addRow()" style="margin-top: 15px; padding: 10px; background-color: #4285f4; color: white; border: none; cursor:pointer; font-weight:bold;">+ Add Single Row</button>
 
-        <!-- Bulk Import Moved to Bottom -->
         <div class="bulk-import-container">
             <strong>Bulk Excel Import:</strong> Copy rows from Excel (Doctor, Child Name, Survey Date, Birth Date, Gender, Weight, Height) and paste them below.
             <textarea id="bulkPasteArea" placeholder="Paste tab-separated Excel data here..."></textarea>
@@ -136,6 +142,15 @@
             <p><strong>Step 7:</strong> Enter <strong>Weight</strong> (kg).</p>
             <p><strong>Step 8:</strong> Enter <strong>Height</strong> (cm) and press Enter or click outside the box.</p>
 
+            <h3>Guide for Bulk Excel Import</h3>
+            <p>If you have existing data for many children, you can paste it directly into the tool to calculate everything instantly.</p>
+            <ol>
+                <li><strong>Prepare your Excel file:</strong> Ensure your data is arranged in exactly these 7 columns in this specific order: <em>Doctor/Facility Name, Name of Child, Survey Date, Birth Date, Gender (m/f), Weight (kg), Height (cm)</em>.</li>
+                <li><strong>Copy the data:</strong> Highlight and copy the rows containing your data. Do not copy the header row. (For smooth performance, copy a maximum of 1,000 rows at a time).</li>
+                <li><strong>Paste into the tool:</strong> Go to the <strong>DBI_Calculator</strong> tab and scroll to the bottom. Click inside the white text box under "Bulk Excel Import" and paste your copied data (Ctrl+V).</li>
+                <li><strong>Import:</strong> Click the green <strong>Import Data</strong> button. The tool will automatically create the rows and instantly display all calculations and DBI categories.</li>
+            </ol>
+
             <h3>Automatic Calculations</h3>
             <p>After data entry, the nutrition status – underweight (WAZ), stunting (HAZ) and wasting (WHZ) is calculated and reflected automatically.</p>
             <ul>
@@ -170,26 +185,59 @@
         </div>
     </div>
 
-    <!-- TAB 4: Framework & References (Updated 50/50 Layout) -->
+    <!-- TAB 4: Framework & References -->
     <div id="reference" class="tab-content">
-        <div style="display: flex; gap: 40px; flex-wrap: wrap;">
+        <div style="display: flex; gap: 40px; flex-wrap: wrap; margin-bottom: 30px;">
             
-            <!-- Left Side: Contributions -->
-            <div style="flex: 1; min-width: 300px;">
-                <h3 style="color: #4285f4; border-bottom: 2px solid #ccc; padding-bottom: 5px;">Contribution by</h3>
-                <ul style="line-height: 1.8; font-size: 15px;">
-                    <li><strong>Dr. Mrudula Phadke</strong>, Senior Advisor to UNICEF and Government of Maharashtra</li>
-                    <li><strong>Mr. Gagan Gautam</strong>, Consultant to UNICEF Maharashtra</li>
-                    <li><strong>Rajalakshmi Nair</strong>, Nutrition Specialist, UNICEF</li>
-                    <li><strong>Chhaya Rade</strong>, Consultant to UNICEF Maharashtra</li>
-                </ul>
+            <!-- Left Side: Classification Table & Definitions -->
+            <div style="flex: 1; min-width: 350px;">
+                <h2 style="margin-top: 0;">Classification Table – DBI A to I</h2>
+                
+                <table class="ref-table" style="margin-bottom: 20px;">
+                    <thead>
+                        <tr>
+                            <th>Group</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>A</td><td>Normal (No anthropometric failure)</td></tr>
+                        <tr><td>B</td><td>Only Wasting</td></tr>
+                        <tr><td>C</td><td>Underweight + Wasting</td></tr>
+                        <tr><td>D</td><td>Underweight + Stunting + Wasting</td></tr>
+                        <tr><td>E</td><td>Underweight + Stunting</td></tr>
+                        <tr><td>F</td><td>Only Stunting</td></tr>
+                        <tr><td>G</td><td>Only Underweight</td></tr>
+                        <tr><td>H</td><td>Stunting + Overweight/Obesity</td></tr>
+                        <tr><td>I</td><td>Only Overweight/Obesity</td></tr>
+                    </tbody>
+                </table>
+
+                <h4 style="margin-bottom: 10px;">Definition – Underweight, Stunting and Wasting (WHO 2005)</h4>
+                <p style="font-size: 13px; line-height: 1.5; color: #333;"><strong>Underweight:</strong> It is defined as having a weight for age z-score more than 2 standard deviations (SD) below the median of the WHO child growth standards.</p>
+                <p style="font-size: 13px; line-height: 1.5; color: #333;"><strong>Stunting:</strong> It is defined as having a height or length for age z-score more than 2 standard deviations (SD) below the median of the WHO child growth standards.</p>
+                <p style="font-size: 13px; line-height: 1.5; color: #333;"><strong>Wasting:</strong> It is defined as having a weight for length or weight for height z-score more than 2 standard deviations (SD) below the median of the WHO child growth standards.</p>
+                <p style="font-size: 13px; line-height: 1.5; color: #333;"><strong>Overweight/Obesity:</strong> It is defined as having a weight for length or weight for height z-score more than 2 standard deviations (SD) above the median of the WHO child growth standards.</p>
             </div>
 
             <!-- Right Side: Framework Image -->
-            <div style="flex: 1; min-width: 300px; text-align: center;">
+            <div style="flex: 1; min-width: 350px; text-align: center;">
                 <img src="dbi-framework.png" alt="DBI Conceptual Framework" style="max-width: 100%; border: 1px solid #ccc; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
             </div>
             
+        </div>
+        
+        <hr style="border: 0; border-top: 1px solid #ccc; margin: 20px 0;">
+
+        <!-- Bottom: Contributions -->
+        <div>
+            <h3 style="color: #4285f4; margin-bottom: 10px;">Contribution by</h3>
+            <ul style="line-height: 1.8; font-size: 15px; list-style-type: square;">
+                <li><strong>Dr. Mrudula Phadke</strong>, Senior Advisor to UNICEF and Government of Maharashtra</li>
+                <li><strong>Mr. Gagan Gautam</strong>, Consultant to UNICEF Maharashtra</li>
+                <li><strong>Rajalakshmi Nair</strong>, Nutrition Specialist, UNICEF</li>
+                <li><strong>Chhaya Rade</strong>, Consultant to UNICEF Maharashtra</li>
+            </ul>
         </div>
     </div>
 
@@ -147743,7 +147791,7 @@
         tr.innerHTML = html;
         tbody.appendChild(tr);
 
-        if(data) calcRow(rowCount, false); // false suppresses pop-ups during bulk load
+        if(data) calcRow(rowCount, false); 
     }
 
     function formatExcelDate(dateStr) {
@@ -147831,13 +147879,11 @@
         const outWhzZ = row.querySelector('.whz-z'); const outWhzS = row.querySelector('.whz-stat');
         const outDbi = row.querySelector('.dbi-cat');
 
-        // Reset Styles
         wInput.style.backgroundColor = "white";
         hInput.style.backgroundColor = "white";
         outDbi.style.backgroundColor = "transparent"; 
         outDbi.style.color = "black";
 
-        // 1. Instantly Calculate Age if Dates are present
         let ageDays = -1;
         if (sDate && bDate) {
             let sDateObj = new Date(sDate);
@@ -147862,7 +147908,6 @@
                 outDbi.style.backgroundColor = "#ffeb3b"; 
                 return;
             }
-            // Display Age in Months immediately
             outAgeM.innerText = Math.round(ageDays / 30.4375);
             
             if (ageDays > 1856) {
@@ -147870,10 +147915,9 @@
                 return;
             }
         } else {
-            outAgeM.innerText = ""; // Clear if dates are missing
+            outAgeM.innerText = ""; 
         }
 
-        // 2. Strict Weight and Height Validations
         if (!isNaN(w) && w > 32) {
             if(showAlerts) alert("Weight entered is greater than 32 kg which is beyond WHO growth standards");
             wInput.value = ""; 
@@ -147885,11 +147929,9 @@
             return;
         }
 
-        // Apply pink alerts for lower bounds
         if (!isNaN(w) && (w < 1.8)) wInput.style.backgroundColor = "pink";
         if (!isNaN(h) && (h < 45)) hInput.style.backgroundColor = "pink";
 
-        // 3. Stop here if any required field is still missing
         if (!sDate || !bDate || !gender || isNaN(w) || isNaN(h)) return;
         
         if (h < 45) {
@@ -147897,7 +147939,6 @@
              return;
         }
 
-        // 4. Calculate Z Scores
         let waz = 0, haz = 0, whz = 0;
         let wfaData = getLMS((gender === 'm' ? "WFA_BOYS" : "WFA_GIRLS"), ageDays);
         if(wfaData) waz = computeZ(w, wfaData.L, wfaData.M, wfaData.S) || 0;
