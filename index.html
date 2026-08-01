@@ -8,14 +8,16 @@
         body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background-color: #f8f9fa; }
         .header-title { background-color: #4285f4; color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 22px; margin-bottom: 0;}
         
-        /* Tabs */
-        .tab-container { margin-bottom: 15px; margin-top: 15px; display: flex; gap: 5px; flex-wrap: wrap;}
-        .tab-btn { background-color: #e0e0e0; border: none; padding: 10px 15px; cursor: pointer; font-size: 15px; font-weight: bold; border-radius: 5px 5px 0 0;}
-        .tab-btn.active { background-color: white; border: 1px solid #ccc; border-bottom: none; color: #4285f4;}
-        .tab-content { display: none; background: white; padding: 15px; border: 1px solid #ccc; overflow-x: auto; margin-top: -6px; }
+        /* Tabs - Updated to fill the entire row evenly */
+        .tab-container { margin-bottom: 15px; margin-top: 15px; display: flex; width: 100%; border-bottom: 1px solid #ccc;}
+        .tab-btn { flex: 1; background-color: #e0e0e0; border: 1px solid #ccc; border-bottom: none; padding: 12px 10px; cursor: pointer; font-size: 15px; font-weight: bold; border-radius: 5px 5px 0 0; text-align: center; margin-right: 2px;}
+        .tab-btn:last-child { margin-right: 0; }
+        .tab-btn.active { background-color: white; border-top: 3px solid #4285f4; border-bottom: 1px solid white; color: #4285f4; margin-bottom: -1px; z-index: 1;}
+        
+        .tab-content { display: none; background: white; padding: 15px; border: 1px solid #ccc; overflow-x: auto; }
         .tab-content.active { display: block; }
 
-        /* Compact Table Design to Prevent Scrolling */
+        /* Compact Table Design */
         table { border-collapse: collapse; width: 100%; table-layout: auto; }
         th, td { border: 1px solid #ccc; padding: 4px; text-align: center; font-size: 11px; }
         th { background-color: #4285f4; color: white; }
@@ -23,8 +25,8 @@
         .status-cell { font-weight: bold; }
         
         /* Bulk Import */
-        .bulk-import-container { background: #e8f0fe; padding: 10px; margin-bottom: 15px; border: 1px solid #4285f4; border-radius: 5px; }
-        .bulk-import-container textarea { width: 100%; height: 40px; margin-bottom: 5px; font-size: 11px; }
+        .bulk-import-container { background: #e8f0fe; padding: 15px; margin-top: 20px; border: 1px solid #4285f4; border-radius: 5px; }
+        .bulk-import-container textarea { width: 100%; height: 40px; margin-top: 10px; margin-bottom: 5px; font-size: 11px; }
 
         /* Summary Grid */
         .summary-grid { display: flex; gap: 20px; flex-wrap: wrap;}
@@ -51,13 +53,6 @@
 
     <!-- TAB 1: Data Entry -->
     <div id="dataEntry" class="tab-content active">
-        
-        <div class="bulk-import-container">
-            <strong>Bulk Excel Import:</strong> Copy rows from Excel (Doctor, Child Name, Survey Date, Birth Date, Gender, Weight, Height) and paste them below.
-            <textarea id="bulkPasteArea" placeholder="Paste tab-separated Excel data here..."></textarea>
-            <button onclick="processBulkPaste()" style="background-color: #34a853; color: white; border: none; padding: 5px 10px; cursor: pointer; font-weight: bold;">Import Data</button>
-        </div>
-
         <table id="spreadsheet">
             <thead>
                 <tr>
@@ -87,7 +82,15 @@
                 <!-- Rows injected via JS -->
             </tbody>
         </table>
+        
         <button onclick="addRow()" style="margin-top: 15px; padding: 10px; background-color: #4285f4; color: white; border: none; cursor:pointer; font-weight:bold;">+ Add Single Row</button>
+
+        <!-- Bulk Import Moved to Bottom -->
+        <div class="bulk-import-container">
+            <strong>Bulk Excel Import:</strong> Copy rows from Excel (Doctor, Child Name, Survey Date, Birth Date, Gender, Weight, Height) and paste them below.
+            <textarea id="bulkPasteArea" placeholder="Paste tab-separated Excel data here..."></textarea>
+            <button onclick="processBulkPaste()" style="background-color: #34a853; color: white; border: none; padding: 5px 10px; cursor: pointer; font-weight: bold;">Import Data</button>
+        </div>
     </div>
 
     <!-- TAB 2: Summary Dashboard -->
@@ -167,24 +170,26 @@
         </div>
     </div>
 
-    <!-- TAB 4: Framework & References -->
+    <!-- TAB 4: Framework & References (Updated 50/50 Layout) -->
     <div id="reference" class="tab-content">
-        <div class="guide-section">
-            <h2>Conceptual Framework & References</h2>
-            <p>Below is the visual representation of the Double Burden Index (DBI) categories.</p>
+        <div style="display: flex; gap: 40px; flex-wrap: wrap;">
             
-            <!-- Replace the src link below with your actual image URL once uploaded to GitHub or another host -->
-            <div style="text-align: center; margin: 20px 0;">
-                <img src="https://via.placeholder.com/800x400.png?text=Insert+DBI+Framework+Image+Here" alt="DBI Conceptual Framework" style="max-width: 100%; border: 1px solid #ccc;">
+            <!-- Left Side: Contributions -->
+            <div style="flex: 1; min-width: 300px;">
+                <h3 style="color: #4285f4; border-bottom: 2px solid #ccc; padding-bottom: 5px;">Contribution by</h3>
+                <ul style="line-height: 1.8; font-size: 15px;">
+                    <li><strong>Dr. Mrudula Phadke</strong>, Senior Advisor to UNICEF and Government of Maharashtra</li>
+                    <li><strong>Mr. Gagan Gautam</strong>, Consultant to UNICEF Maharashtra</li>
+                    <li><strong>Rajalakshmi Nair</strong>, Nutrition Specialist, UNICEF</li>
+                    <li><strong>Chhaya Rade</strong>, Consultant to UNICEF Maharashtra</li>
+                </ul>
             </div>
 
-            <h3>Authors & References</h3>
-            <ul>
-                <li><strong>Dr. Mrudula Phadke</strong> - Senior Advisor to UNICEF Maharashtra</li>
-                <li><strong>Mr. Gagan Gautam</strong> - Consultant to UNICEF Maharashtra</li>
-                <li><strong>Rajalakshmi Nair</strong> - Nutrition Specialist</li>
-                <li><strong>Rade</strong></li>
-            </ul>
+            <!-- Right Side: Framework Image -->
+            <div style="flex: 1; min-width: 300px; text-align: center;">
+                <img src="dbi-framework.png" alt="DBI Conceptual Framework" style="max-width: 100%; border: 1px solid #ccc; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+            </div>
+            
         </div>
     </div>
 
@@ -147713,12 +147718,14 @@
         let gender = data ? data[4].toLowerCase().trim() : "";
         let weight = data ? data[5] : "";
         let height = data ? data[6] : "";
+        
+        let todayStr = new Date().toISOString().split('T')[0];
 
         let html = `<td>${rowCount}</td>`;
         html += `<td><input type="text" class="facility" value="${facility}"></td>`;
         html += `<td><input type="text" class="childName" value="${child}"></td>`;
-        html += `<td><input type="date" class="surveyDate" value="${sDate}" onchange="calcRow(${rowCount})"></td>`;
-        html += `<td><input type="date" class="dob" value="${bDate}" onchange="calcRow(${rowCount})"></td>`;
+        html += `<td><input type="date" class="surveyDate" value="${sDate}" max="${todayStr}" onchange="calcRow(${rowCount})"></td>`;
+        html += `<td><input type="date" class="dob" value="${bDate}" max="${todayStr}" onchange="calcRow(${rowCount})"></td>`;
         html += `<td class="age-months status-cell"></td>`;
         html += `<td><select class="gender" onchange="calcRow(${rowCount})">
                     <option value="">Select</option>
@@ -147757,7 +147764,6 @@
             return;
         }
 
-        // Remove the default blank rows if table is empty
         if (rowCount === 10 && !document.querySelector('.childName').value) {
             document.getElementById('tableBody').innerHTML = "";
             rowCount = 0;
@@ -147831,36 +147837,67 @@
         outDbi.style.backgroundColor = "transparent"; 
         outDbi.style.color = "black";
 
+        // 1. Instantly Calculate Age if Dates are present
+        let ageDays = -1;
+        if (sDate && bDate) {
+            let sDateObj = new Date(sDate);
+            let todayObj = new Date();
+            todayObj.setHours(0,0,0,0);
+            
+            if (sDateObj > todayObj) {
+                if(showAlerts) alert("Survey Date cannot be a future date.");
+                sDateInput.value = "";
+                outAgeM.innerText = "";
+                outDbi.innerText = "Error: Future Date";
+                outDbi.style.backgroundColor = "#ffeb3b";
+                return;
+            }
+
+            ageDays = Math.floor((sDateObj - new Date(bDate)) / 86400000);
+            if (ageDays < 0) {
+                if(showAlerts) alert("Survey Date cannot be before Birth Date.");
+                sDateInput.value = ""; 
+                outAgeM.innerText = "";
+                outDbi.innerText = "Error: Negative Date";
+                outDbi.style.backgroundColor = "#ffeb3b"; 
+                return;
+            }
+            // Display Age in Months immediately
+            outAgeM.innerText = Math.round(ageDays / 30.4375);
+            
+            if (ageDays > 1856) {
+                outDbi.innerText = "Age of the child > 5 years";
+                return;
+            }
+        } else {
+            outAgeM.innerText = ""; // Clear if dates are missing
+        }
+
+        // 2. Strict Weight and Height Validations
+        if (!isNaN(w) && w > 32) {
+            if(showAlerts) alert("Weight entered is greater than 32 kg which is beyond WHO growth standards");
+            wInput.value = ""; 
+            return;
+        }
+        if (!isNaN(h) && h > 120) {
+            if(showAlerts) alert("Height entered is greater than 120 cm which is beyond WHO growth standards");
+            hInput.value = ""; 
+            return;
+        }
+
+        // Apply pink alerts for lower bounds
+        if (!isNaN(w) && (w < 1.8)) wInput.style.backgroundColor = "pink";
+        if (!isNaN(h) && (h < 45)) hInput.style.backgroundColor = "pink";
+
+        // 3. Stop here if any required field is still missing
         if (!sDate || !bDate || !gender || isNaN(w) || isNaN(h)) return;
-
-        // Visual Alerts for Extreme Weight/Height
-        if (w < 1.8 || w > 32) wInput.style.backgroundColor = "pink";
-        if (h < 45 || h > 120) hInput.style.backgroundColor = "pink";
-
-        const ageDays = Math.floor((new Date(sDate) - new Date(bDate)) / 86400000);
-        
-        if (ageDays < 0) {
-            if(showAlerts) alert("Survey Date cannot be before Birth Date.");
-            sDateInput.value = ""; 
-            outAgeM.innerText = "";
-            outDbi.innerText = "Error: Negative Date";
-            outDbi.style.backgroundColor = "#ffeb3b"; 
-            return;
-        }
-
-        // Display Age in Months
-        outAgeM.innerText = Math.round(ageDays / 30.4375);
-        
-        if (ageDays > 1856) {
-            outDbi.innerText = "Age of the child > 5 years";
-            return;
-        }
         
         if (h < 45) {
              outDbi.innerText = "Implausible data (Length < 45cm)";
              return;
         }
 
+        // 4. Calculate Z Scores
         let waz = 0, haz = 0, whz = 0;
         let wfaData = getLMS((gender === 'm' ? "WFA_BOYS" : "WFA_GIRLS"), ageDays);
         if(wfaData) waz = computeZ(w, wfaData.L, wfaData.M, wfaData.S) || 0;
@@ -147913,7 +147950,6 @@
 
         outDbi.innerText = dbi;
         
-        // Color Coding for DBI Category
         if (dbi.startsWith("A")) {
             outDbi.style.backgroundColor = "#34a853";
             outDbi.style.color = "white";
