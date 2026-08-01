@@ -45,8 +45,9 @@
         .summary-table th, .summary-table td { padding: 8px; font-size: 13px; }
         
         /* Chart Container */
-        .chart-container { width: 100%; max-width: 500px; flex-grow: 1; background: white; padding: 15px; border-radius: 8px; border: 1px solid #ccc; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; align-items: center;}
-        .chart-wrapper { position: relative; width: 100%; height: 350px; }
+        .chart-container { width: 100%; max-width: 500px; flex-grow: 1; background: white; padding: 15px; border-radius: 8px; border: 1px solid #ccc; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center;}
+        /* Increased height to allow the pie chart to expand fully */
+        .chart-wrapper { position: relative; width: 100%; height: 420px; margin-top: 10px; }
 
         /* Export Buttons (Top Right) */
         .header-with-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 10px; }
@@ -63,8 +64,9 @@
         .guide-box { background: white; padding: 20px; border-radius: 8px; border: 1px solid #ccc; box-shadow: 0 2px 4px rgba(0,0,0,0.05); font-size: 14px; line-height: 1.6; color: #333;}
         .guide-box h2, .guide-box h3 { margin-top: 0; color: #e91e63; border-bottom: 2px solid #eee; padding-bottom: 10px; font-size: 18px;}
         
-        .tech-note { background-color: #fff3cd; border-left: 5px solid #ffc107; padding: 20px; margin-top: 20px; font-size: 14px; line-height: 1.6; border-radius: 0 8px 8px 0;}
-        .tech-note h3 { margin-top: 0; color: #856404; border-bottom: none; font-size: 18px;}
+        /* Updated Technical Note to match Pink Theme */
+        .tech-note { background-color: #fce4ec; border-left: 5px solid #e91e63; padding: 20px; margin-top: 20px; font-size: 14px; line-height: 1.6; border-radius: 0 8px 8px 0;}
+        .tech-note h3 { margin-top: 0; color: #c2185b; border-bottom: none; font-size: 18px;}
         
         .copyright-notice { font-size: 13px; color: #880e4f; background-color: #f8bbd0; text-align: center; margin-top: 30px; padding: 15px; border: 1px solid #f06292; border-radius: 8px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
     </style>
@@ -148017,7 +148019,6 @@
 
         outDbi.innerText = dbi;
         
-        // Intense colors for A and D
         if (dbi.startsWith("A")) {
             outDbi.style.backgroundColor = "#4caf50";
             outDbi.style.color = "white";
@@ -148076,12 +148077,10 @@
             
             if (count > 0) {
                 chartData.push(count); chartColors.push(cat.bg); 
-                // Adding Percentage into legend text for PNG downloads
                 chartLabels.push(`${cat.name} (${perc}%)`);
             }
         });
 
-        // Restore Total (A to I) row
         let totalPerc = validTotal > 0 ? ((totalAtoI / validTotal) * 100).toFixed(1) : "0.0";
         html += `<tr style="background:#e8f5e9; color:black; font-weight:bold">
                     <td colspan="2" style="text-align:right;">Total (A to I)</td>
@@ -148104,8 +148103,9 @@
             options: { 
                 responsive: true, 
                 maintainAspectRatio: false, 
+                layout: { padding: 0 },
                 plugins: { 
-                    legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } },
+                    legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 }, padding: 15 } },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
